@@ -1,0 +1,9 @@
+{
+  "name": "cartridge",
+  "description": "Claude Code plugins for the Cartridge team",
+  "owner": {
+    "name": "Cartridge",
+    "url": "https://github.com/cartridge-gg"
+  },
+  "plugins": []
+}
