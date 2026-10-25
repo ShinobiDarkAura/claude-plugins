@@ -1,0 +1,38 @@
+name: Pipelines
+
+# Checks the creative pipelines in pipelines/ (see pipelines/README.md): every pipeline's README.md and its
+# frontmatter, the steps checklist in SKILL.md, and each skill's offline self-check. Spends nothing and needs no secrets.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pipelines/**"
+      - "scripts/pipelines-check.py"
+      - ".github/workflows/pipelines.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "pipelines/**"
+      - "scripts/pipelines-check.py"
+      - ".github/workflows/pipelines.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check each README.md and SKILL.md
+        run: python3 scripts/pipelines-check.py
+
+      - name: Run each skill's self-check
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for f in pipelines/*/scripts/selfcheck.py; do
+            echo "== $f"
+            PYTHONDONTWRITEBYTECODE=1 python3 "$f"
+          done

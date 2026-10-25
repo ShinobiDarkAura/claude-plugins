@@ -1,0 +1,23 @@
+{
+  "_about": "One reaction ad for scripts/compose.py, saved as <name>.ad.json in the batch folder. Step 5 starts it (paths, mute, bleep_words, caption_overrides); step 9 adds crop and lost. Paths are relative to this file. Delete the keys you don't need.",
+  "profile": "dango-derby",
+  "face": "takes/coach.mp4",
+  "words": "takes/coach-words.json",
+  "gameplay": "gameplay/coach.mp4",
+  "trace": "plans/coach/film-trace.json",
+  "out": "out/coach-quiet-coach.mp4",
+  "duration": 30,
+
+  "crop": null,
+  "_crop": "null = fixed crop on the median face (default; a face drifting part-way out reads real). An integer = a fixed crop top in px, e.g. 90 to keep someone walking behind in shot. \"track\" = follow the face; only when a key line's mouth is lost for seconds.",
+
+  "bleep_words": ["weapon"],
+  "_bleep_words": "extra words to bleep and show as ##### - the stand-in curse the take was written with (see SKILL.md, step 3).",
+
+  "mute": [[10.9, 12.6]],
+  "_mute": "seconds to silence and leave uncaptioned: a stage direction read aloud, a line the lips don't match (lipcheck.py), or a robotic background voice.",
+
+  "caption_overrides": {"bubbles": "BUBBLES?!"},
+  "lost": [],
+  "_lost": "times the player loses a place, for the game sound's 'lost' cue (Dango)."
+}
