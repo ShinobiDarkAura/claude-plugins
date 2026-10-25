@@ -1,6 +1,6 @@
 {
-  "name": "cartridge",
-  "description": "Claude Code plugins for the Cartridge team",
+  "name": "cartridge-marketing",
+  "description": "Claude Code plugins for the Cartridge marketing team",
   "owner": {
     "name": "Cartridge",
     "url": "https://github.com/cartridge-gg"

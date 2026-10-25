@@ -1,8 +1,14 @@
-# Cartridge Claude Code plugins
+# Cartridge marketing Claude Code plugins
 
-This repo is the Claude Code plugin marketplace for the Cartridge team. It
+This branch, `marketing`, is the Claude Code plugin marketplace for the
+Cartridge marketing team. Its marketplace name is `cartridge-marketing`. It
 holds only the catalog file, `.claude-plugin/marketplace.json`. The plugin
 files stay in the repos that own them, such as `cartridge-gg/marketing-engine`.
+
+Each branch of this repo is a separate catalog. The `main` branch is the
+`cartridge` marketplace for the whole team. Do not merge this branch into
+another catalog branch, or another catalog branch into this one. A merge
+overwrites the marketplace `name` and the plugin list.
 
 ## Use the marketplace
 
@@ -12,21 +18,26 @@ You need read access to this repo and to each repo that a plugin comes from.
    - An SSH key that is loaded in `ssh-agent`.
    - A stored HTTPS credential: run `gh auth login`, then `gh auth setup-git`.
      Also set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` in your shell profile.
-2. Add the marketplace:
+2. Add the marketplace. The `#marketing` suffix selects this branch:
 
    ```bash
-   claude plugin marketplace add cartridge-gg/claude-plugins
+   claude plugin marketplace add cartridge-gg/claude-plugins#marketing
    ```
 
 3. Install a plugin:
 
    ```bash
-   claude plugin install <plugin-name>@cartridge
+   claude plugin install <plugin-name>@cartridge-marketing
    ```
 
-To get updates, run `/plugin marketplace update cartridge` in a session. You
-can also turn on auto-update: open `/plugin`, go to **Marketplaces**, select
-`cartridge`, and select **Enable auto-update**.
+To get updates, run `/plugin marketplace update cartridge-marketing` in a
+session. You can also turn on auto-update: open `/plugin`, go to
+**Marketplaces**, select `cartridge-marketing`, and select **Enable
+auto-update**.
+
+To add the marketplace for everyone who works in one repo, run the add command
+there with `--scope project`. Then commit the `.claude/settings.json` file that
+it writes.
 
 ## Add a plugin
 
