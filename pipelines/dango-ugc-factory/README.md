@@ -3,11 +3,10 @@ name: dango-ugc-factory
 kind: ad
 stage: production
 owner: alex
-version: 2.0.0
 last_verified: 2026-10-23
 inputs: [one-line brief]
 outputs: [30 s 1080x1920 60fps mp4]
-needs: [macOS with Homebrew, joystick MCP server (shared fal key), cartridge.gg tailnet, read access to cartridge-gg/dangoderby]
+needs: [macOS with Homebrew, joystick MCP server (shared fal key), cartridge.gg tailnet, read access to cartridge-gg/claude-plugins, read access to cartridge-gg/dangoderby]
 ---
 
 # dango-ugc-factory
@@ -44,35 +43,37 @@ into the lens for the first time, and the joke lands.
   nan, quiet coach). 8–10 ads shipped.
 - **Cost:** about $13.87 for each 30 s take, plus a few cents for the start frame and the word timings.
 
-The playbook is [`SKILL.md`](SKILL.md): a checklist with one item per step, then the details of each step.
+The playbook is [`SKILL.md`](skills/dango-ugc-factory/SKILL.md): a checklist with one item per step, then the
+details of each step.
 
 ## Install and set up
 
 You need:
 
 - A Mac with [Homebrew](https://brew.sh) and Claude Code (the desktop app's Code tab or the `claude` CLI).
-- Read access to cartridge-gg/marketing-engine and cartridge-gg/dangoderby (`gh auth status` shows your login).
+- Read access to cartridge-gg/claude-plugins and cartridge-gg/dangoderby (`gh auth status` shows your login).
 - Tailscale on the cartridge.gg tailnet.
 
 You do not need any API key.
 
-1. Install the skill:
+1. Install the plugin. In a terminal, run:
 
    ```bash
-   npx -y skills@1.7.0 add https://github.com/cartridge-gg/marketing-engine/tree/main/pipelines/dango-ugc-factory \
-     --skill '*' -g -a claude-code
+   claude plugin marketplace add cartridge-gg/claude-plugins#marketing
+   claude plugin install dango-ugc-factory@cartridge-marketing
    ```
 
-   Keep `-g`. The skill calls its own scripts at `~/.claude/skills/...`, so a project install breaks them.
+   You add the marketplace only once. The install needs `git` access to GitHub without a prompt. If you have no
+   GitHub SSH key, run `gh auth login` and `gh auth setup-git`, and add
+   `export CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` to your shell profile.
 
-   If you installed the kit before 2026-10-23, delete `~/.claude/skills/codex-imagegen`. That skill used one
-   person's ChatGPT plan, and it is no longer part of the kit.
+   If you installed the kit with `npx skills add`, delete `~/.claude/skills/dango-ugc-factory`. If that copy stays,
+   Claude loads the skill twice. If you installed the kit before 2026-10-23, also delete
+   `~/.claude/skills/codex-imagegen`. That skill used one person's ChatGPT plan, and it is no longer part of the kit.
 
-2. Set up the Mac. Before the first video, Claude runs the skill's `scripts/setup.sh`. You can also run it yourself:
+2. Set up the Mac. Before the first video, Claude runs the skill's `scripts/setup.sh`. To run it earlier, ask Claude:
 
-   ```bash
-   bash ~/.claude/skills/dango-ugc-factory/scripts/setup.sh
-   ```
+   > Set up the Dango UGC factory.
 
    It installs what is missing and skips what is done: ffmpeg, node and gh (Homebrew), Pillow + numpy, the Xcode
    command line tools (for the face finder), the game on the filmed commit `de4035b32` with Playwright's Chromium
@@ -88,6 +89,11 @@ You do not need any API key.
    - **The `joystick` server is new:** restart Claude Code, run `/mcp`, select `joystick` and sign in.
 
    Run it again until it prints `Ready.`
+
+3. Get updates. You get a new version only when the version in
+   [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) changes. Run
+   `claude plugin update dango-ugc-factory@cartridge-marketing`, or turn on auto-update: open `/plugin`, go to
+   **Marketplaces**, select `cartridge-marketing`, and select **Enable auto-update**.
 
 ## Make a video
 
@@ -140,11 +146,14 @@ Questions: ask Alex.
 
 ## Files
 
-This folder is also the skill that `npx skills add` installs.
+This folder is a Claude Code plugin in the `cartridge-marketing` marketplace. The skill is in
+`skills/dango-ugc-factory/`.
 
-- [`SKILL.md`](SKILL.md): the skill that Claude runs: the checklist of the 10 steps, and the details of each step
-  (prompts, rules, commands).
-- [`reference/`](reference/): the brand guardrails, the game profile and the example `ad.json`.
-- [`scripts/`](scripts/): the code of the steps, `setup.sh` (the Mac setup) and `selfcheck.py` (the check that CI
-  runs).
-- [`assets/`](assets/): the Dango font.
+- [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json): the plugin's name, version and description.
+- [`SKILL.md`](skills/dango-ugc-factory/SKILL.md): the skill that Claude runs: the checklist of the 10 steps, and the
+  details of each step (prompts, rules, commands).
+- [`reference/`](skills/dango-ugc-factory/reference/): the brand guardrails, the game profile and the example
+  `ad.json`.
+- [`scripts/`](skills/dango-ugc-factory/scripts/): the code of the steps, `setup.sh` (the Mac setup) and
+  `selfcheck.py` (the check that CI runs).
+- [`assets/`](skills/dango-ugc-factory/assets/): the Dango font.

@@ -2,8 +2,12 @@
 
 This branch, `marketing`, is the Claude Code plugin marketplace for the
 Cartridge marketing team. Its marketplace name is `cartridge-marketing`. It
-holds only the catalog file, `.claude-plugin/marketplace.json`. The plugin
-files stay in the repos that own them, such as `cartridge-gg/marketing-engine`.
+holds the catalog file, `.claude-plugin/marketplace.json`, and the team's
+creative pipelines in `pipelines/`. Each pipeline is one plugin.
+
+| Plugin | What it makes |
+| --- | --- |
+| [`dango-ugc-factory`](pipelines/dango-ugc-factory/) | 30 s Dango Derby reaction ads |
 
 Each branch of this repo is a separate catalog. The `main` branch is the
 `cartridge` marketplace for the whole team. Do not merge this branch into
@@ -39,7 +43,18 @@ To add the marketplace for everyone who works in one repo, run the add command
 there with `--scope project`. Then commit the `.claude/settings.json` file that
 it writes.
 
-## Add a plugin
+## Add a pipeline
+
+Follow [`pipelines/README.md`](pipelines/README.md). Open the PR into
+`marketing`, not `main`. The `Pipelines` workflow checks each pipeline and the
+catalog.
+
+Every user clones this branch, so keep large files out of it. Keep media that a
+run makes, such as takes, gameplay and finished ads, outside the repo.
+
+## Add a plugin from another repo
+
+Use this for a plugin that its owner repo keeps.
 
 1. Put the plugin in its owner repo, in its own directory. The directory must
    contain `.claude-plugin/plugin.json`.

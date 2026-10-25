@@ -5,5 +5,11 @@
     "name": "Cartridge",
     "url": "https://github.com/cartridge-gg"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "dango-ugc-factory",
+      "source": "./pipelines/dango-ugc-factory",
+      "category": "pipeline"
+    }
+  ]
 }

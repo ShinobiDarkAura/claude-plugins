@@ -5,24 +5,31 @@ the finished video file. It has declared inputs and outputs, and its own scripts
 place where the team keeps pipelines, so they are versioned and anyone can install and run them. Before, pipelines
 lived in zips and Downloads folders.
 
-Each folder here is one pipeline. Its `README.md` frontmatter gives its stage, owner and version.
+Each folder here is one pipeline, and each pipeline is one Claude Code plugin in the `cartridge-marketing`
+marketplace (the `marketing` branch of this repo). Its `README.md` frontmatter gives its stage and owner. Its
+`.claude-plugin/plugin.json` gives its version.
 
-Pipelines are not the generic skills in `skills/`. Those run unattended in CI against any brand. A pipeline belongs
-to one game, a person runs it (today on a Mac with Claude Code), and it runs scripts. See
+Pipelines are not the generic skills in marketing-engine's `skills/`. Those run unattended in CI against any brand.
+A pipeline belongs to one game, a person runs it (today on a Mac with Claude Code), and it runs scripts. See
 `.claude/rules/pipelines.md`.
 
 ## Layout
 
 ```text
 pipelines/
-  <name>/              the pipeline, and also the skill that npx skills add installs
-    README.md          frontmatter, what it is for, the creatives it makes, setup, how to run it, known issues
-    SKILL.md           the skill that Claude runs, with the checklist of its steps
-    VERSION            optional: the skill's version, the same as the README.md frontmatter
-    reference/         optional: what SKILL.md points to, such as brand rules or a game profile
-    scripts/           the code of the steps; optional scripts/selfcheck.py, an offline check that CI runs
-    assets/            optional: files the scripts use, such as fonts
+  <name>/                     the pipeline: one plugin
+    .claude-plugin/plugin.json  the plugin's name (the folder name), version and description
+    README.md                 frontmatter, what it is for, the creatives it makes, setup, how to run it, known issues
+    skills/<name>/            the skill
+      SKILL.md                the skill that Claude runs, with the checklist of its steps
+      reference/              optional: what SKILL.md points to, such as brand rules or a game profile
+      scripts/                the code of the steps; optional scripts/selfcheck.py, an offline check that CI runs
+      assets/                 optional: files the scripts use, such as fonts
 ```
+
+The scripts find the skill folder from their own path, for example `os.path.abspath(__file__)` or `dirname "$0"`.
+Do not write a fixed install path such as `~/.claude/skills/<name>`. The plugin cache path changes with each
+version.
 
 ## `README.md`
 
@@ -38,7 +45,8 @@ fails if the file, the frontmatter or one of the 2 headings is missing.
 
 ## Steps
 
-A pipeline makes its video in steps, and each step has one clearly defined scope. `SKILL.md` has a `## Steps`
+A pipeline makes its video in steps, and each step has one clearly defined scope. `skills/<name>/SKILL.md` has a
+`## Steps`
 section with a checklist: one item per step, in run order. Claude copies the checklist into its reply and checks
 off each step when it is done. Each item looks like this:
 
@@ -63,14 +71,14 @@ name: dango-ugc-factory   # the folder name
 kind: ad                  # ad | scene | capture
 stage: production         # experimenting | graduated | production | retired
 owner: alex
-version: 1.0.1            # must match VERSION when that file exists
 last_verified: 2026-10-10 # the last date a full run was checked
 inputs: [concept script, start frame, race plan]
 outputs: [30 s 1080x1920 60fps mp4]
 needs: [macOS, ffmpeg, swiftc]
 ```
 
-Lists go on one line, and list items cannot contain commas.
+Lists go on one line, and list items cannot contain commas. The frontmatter has no version. The version is only in
+`.claude-plugin/plugin.json`.
 
 ## Stages
 
@@ -86,30 +94,38 @@ Check a pipeline again when a model or the game changes. Move it back a stage if
 ## Install a pipeline
 
 ```bash
-npx -y skills@1.7.0 add https://github.com/cartridge-gg/marketing-engine/tree/main/pipelines/<name> \
-  --skill '*' -g -a claude-code
+claude plugin marketplace add cartridge-gg/claude-plugins#marketing   # once per machine
+claude plugin install <name>@cartridge-marketing
 ```
 
-This installs the pipeline folder as a skill in `~/.claude/skills/<name>/`. Read the pipeline's `README.md` for the
-rest of its setup.
+Read the pipeline's `README.md` for the rest of its setup.
 
 ## Make a video
 
-With the skill installed, ask Claude for a video. The pipeline's `README.md` has an example request.
+With the plugin installed, ask Claude for a video. The pipeline's `README.md` has an example request.
 
 ## Change a pipeline
 
 1. Change only files inside `pipelines/<name>/`.
-2. Bump the version in the `README.md` frontmatter (and `VERSION` in the skill, if it has one).
+2. Bump the `version` in `.claude-plugin/plugin.json`. Users get a change only when the version changes.
 3. If you found a new problem, add it to the known issues in `README.md`.
 4. Run `python3 scripts/pipelines-check.py`.
-5. Open a PR. Say in it what changed. The `Pipelines` workflow checks each `README.md` and `SKILL.md`, and runs
-   each `scripts/selfcheck.py`.
+5. Open a PR into `marketing`, not `main`. Say in it what changed. The `Pipelines` workflow checks each
+   `README.md`, `plugin.json` and `SKILL.md`, checks that the version changed, and runs each
+   `scripts/selfcheck.py`.
 
 ## Add a pipeline
 
-Create `pipelines/<name>/README.md` with the frontmatter and the 2 sections, start at `stage: experimenting`, and
-follow "Change a pipeline".
+1. Create `pipelines/<name>/README.md` with the frontmatter and the 2 sections. Start at `stage: experimenting`.
+2. When the pipeline has a skill, add `.claude-plugin/plugin.json` with `"name": "<name>"` and a `version`, and add
+   an entry to `.claude-plugin/marketplace.json`:
+
+   ```json
+   { "name": "<name>", "source": "./pipelines/<name>", "category": "pipeline" }
+   ```
+
+   Do not set `version` in the entry.
+3. Follow "Change a pipeline".
 
 ## Rules
 
@@ -118,3 +134,4 @@ follow "Change a pipeline".
 
 - Never commit keys, or media that a run makes (takes, gameplay, finished ads). Keep run output in a batch folder
   outside the repo. Small assets that the pipeline itself needs, such as fonts or an end card, belong in the skill.
+  Every user clones this branch, so keep large files out of it.
