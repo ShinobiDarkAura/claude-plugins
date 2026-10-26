@@ -7,7 +7,7 @@ creative pipelines in `pipelines/`. Each pipeline is one plugin.
 
 | Plugin | What it makes |
 | --- | --- |
-| [`dango-ugc-factory`](pipelines/dango-ugc-factory/) | 30 s Dango Derby reaction ads |
+| [`dango-derby`](pipelines/dango-derby/) | 30 s Dango Derby reaction ads, and the race planner and film that they use |
 
 Each branch of this repo is a separate catalog. The `main` branch is the
 `cartridge` marketplace for the whole team. Do not merge this branch into

@@ -1,9 +1,9 @@
 name: Pipelines
 
-# Checks the creative pipelines in pipelines/ (see pipelines/README.md): every pipeline's README.md and its
-# frontmatter, its plugin.json and marketplace entry, the steps checklist in SKILL.md, a version bump on every
-# changed pipeline (pull requests only), each skill's offline self-check, and the catalog itself with
-# `claude plugin validate`. Spends nothing and needs no secrets.
+# Checks the creative pipelines in pipelines/ (see pipelines/README.md): every plugin's plugin.json and marketplace
+# entry, every skill's README.md frontmatter and steps checklist in SKILL.md, a version bump on every changed plugin
+# (pull requests only), each offline self-check, and the catalog itself with `claude plugin validate`. Spends
+# nothing and needs no secrets.
 on:
   push:
     branches: [marketing]
@@ -31,16 +31,16 @@ jobs:
         with:
           fetch-depth: 0 # the version-bump check diffs against the base branch
 
-      - name: Check each README.md, plugin.json and SKILL.md
+      - name: Check each plugin.json, README.md and SKILL.md
         env:
           BASE: ${{ github.base_ref }}
         run: python3 scripts/pipelines-check.py ${BASE:+--base origin/$BASE}
 
-      - name: Run each skill's self-check
+      - name: Run each self-check
         run: |
           set -euo pipefail
           shopt -s nullglob
-          for f in pipelines/*/skills/*/scripts/selfcheck.py; do
+          for f in pipelines/*/scripts/selfcheck.py pipelines/*/skills/*/scripts/selfcheck.py; do
             echo "== $f"
             PYTHONDONTWRITEBYTECODE=1 python3 "$f"
           done
