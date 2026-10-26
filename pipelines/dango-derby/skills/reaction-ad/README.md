@@ -42,7 +42,7 @@ into the lens for the first time, and the joke lands.
 - **Output:** one mp4 at 1080×1920 and 60 fps, about 38 MB for 30 s, from `compose.py`.
 - **Examples:** the approved batches of 2026-09-29 to 2026-10-01 (Dublin bus, Glasgow maw, Aussie lunch break, his
   nan, quiet coach). 8–10 ads shipped.
-- **Cost:** about $13.87 for each 30 s take, plus a few cents for the start frame and the word timings.
+- **Cost:** about $14 for each video if every paid call works the first time. See [Cost](#cost).
 
 ### 30 s reaction ad, anime style or another language (experiment)
 
@@ -81,6 +81,33 @@ Everything runs on your Mac, except the 3 paid steps: the start frame, the take 
 the cost of each paid step and waits for your yes.
 
 Questions: ask Alex.
+
+## Cost
+
+Each video pays for 3 fal calls. Everything else runs on your Mac and costs nothing. The prices are fal's list prices
+on 2026-10-26.
+
+| Step | Call | fal's price | For each call |
+| --- | --- | --- | --- |
+| 2. Start frame | gpt-image-2, high quality, 1152×2048 | $0.158 at 1920×1080 and $0.222 at 2560×1440 | about $0.20 |
+| 3. Take | Seedance 2.5 US, 30 s, 720p | $0.0214 for each 1,000 tokens; a 30 s take at 720p is 648,000 tokens | $13.87 |
+| 4. Word timings | fal-ai/whisper | $0.0011 for each compute second | under $0.01 |
+| 6–10 | Beats, race plan, race film, compose, check | none: they run on your Mac | $0 |
+
+Rough estimates:
+
+| Run | Cost |
+| --- | --- |
+| A video where every paid call works the first time | about $14 |
+| A video with one new take | about $28 |
+| A batch of 5 videos, each with its first take | about $70 |
+| Another cut of a take that you have, against a new race | $0 |
+
+- The take is about 98 % of the cost. So approve the script and the start frame before you approve a take.
+- Each new start frame or frame edit adds about $0.20. Each new take adds $13.87.
+- It is not known whether fal charges for a take that it rejects.
+
+Time: a take renders in 8–25 min. On 2026-10-26 it took 25 min. The free steps take about 5 min on a Mac.
 
 ## Known issues
 

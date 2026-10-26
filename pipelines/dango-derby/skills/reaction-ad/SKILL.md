@@ -127,7 +127,7 @@ read its section under "Step details" below; it has the prompts, the rules and t
   - **Out:** the frame's fal URL, written into `<name>.md`.
   - **Done when:** the user approves the frame: clearly 30+, the earphones in, eyes down, no phone visible, no text
     or logos, and motion blur in the window if the setting moves.
-  - **Cost:** a few cents per call. Ask first.
+  - **Cost:** about $0.20 per call. Ask first.
   - **Code:** none: one `mcp__joystick__fal_ai` call.
 - [ ] **3. Take**
   - **Scope:** make one 30 s take from the approved frame with Seedance 2.5 on its US endpoint. No transcription and
@@ -136,7 +136,7 @@ read its section under "Step details" below; it has the prompts, the rules and t
   - **Out:** the take URL (`video.url` in the result), written into `<name>.md`.
   - **Done when:** the status is `COMPLETED`. If the filter rejects the take, follow "If the filter rejects the take"
     in step 3's details.
-  - **Cost:** about $13.87 per 30 s take at 720p. A take renders for 8–12 min. Ask first.
+  - **Cost:** about $13.87 per 30 s take at 720p. A take renders for 8–25 min. Ask first.
   - **Code:** none: one `mcp__joystick__fal_ai` call.
 - [ ] **4. Transcript**
   - **Scope:** get the word timings and the raw data for the take with fal-ai/whisper. No judgement.
@@ -144,7 +144,7 @@ read its section under "Step details" below; it has the prompts, the rules and t
   - **Out:** `takes/<name>-fal.json`, `takes/<name>.mp4`, `takes/<name>-words.json`, `takes/<name>-sheet.png` (one
     frame per second), and the loud onsets that `take.py` prints.
   - **Done when:** the files exist.
-  - **Cost:** a few cents. Ask first.
+  - **Cost:** under $0.01. Ask first.
   - **Code:** `scripts/take.py`.
 - [ ] **5. Take review**
   - **Scope:** decide whether to keep the take, and which parts to silence. No timing fixes.
