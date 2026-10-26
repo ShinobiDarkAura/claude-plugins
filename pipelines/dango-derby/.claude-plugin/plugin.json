@@ -1,0 +1,7 @@
+{
+  "name": "dango-derby",
+  "version": "3.0.0",
+  "description": "Dango Derby creative pipelines for a Mac: 30 s reaction ads, where an AI actor on top reacts to a real, beat-matched race below, and the race planner and film that they use. Every API call goes through Joystick, so nobody needs an API key.",
+  "author": { "name": "Alex" },
+  "homepage": "https://github.com/cartridge-gg/claude-plugins/tree/marketing/pipelines/dango-derby"
+}

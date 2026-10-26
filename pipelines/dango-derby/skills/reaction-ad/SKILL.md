@@ -1,5 +1,5 @@
 ---
-name: dango-ugc-factory
+name: reaction-ad
 description: Makes 30 s Dango Derby reaction ads — a believable AI actor (face on top) reacting to a real, beat-matched race (gameplay below), split screen — with a game-profile system so the same playbook works for other games. Runs on the user's Mac; every API call goes through Joystick (mcp__joystick__fal_ai), so nobody needs an API key. Use when someone asks for a Dango Derby ad, a UGC or reaction ad, a split-screen ad, a TikTok/Reels creative, or asks to shoot, recut or caption a reaction ad.
 ---
 
@@ -13,16 +13,20 @@ for the first time. Approved batch, 2026-09-30: Dublin bus, Glasgow maw, Aussie 
 The skill ends when step 9 has written the video and step 10 passes. Steps after that, such as a re-encode for a
 platform, an upload or a launch, are not part of this skill.
 
+`<this skill>` is this skill's folder. `<plugin>` is the plugin folder, two levels up from it. The files that every
+Dango Derby skill uses are in `<plugin>`: `scripts/setup.sh`, `scripts/gamesound.py`, `reference/` and `assets/`.
+The race in steps 7 and 8 is the plugin's `race` skill, `dango-derby:race`.
+
 The game-specific parts (layout, captions, footer, how gameplay is captured) are one profile:
-`reference/games/dango-derby.{md,json}`. To use this playbook for another game, start from
-`reference/games/_template.md`.
+`<plugin>/reference/games/dango-derby.{md,json}`. To use this playbook for another game, start from
+`<plugin>/reference/games/_template.md`.
 
 ## Setup and Joystick
 
 Reaction ads run on the user's Mac. Every API call goes through the `joystick` MCP server, on Joystick's shared
 keys. The scripts in this skill call no API, and the skill holds no keys. Before the first ad in a session:
 
-1. Run `bash <this skill>/scripts/setup.sh`. It installs what is missing (ffmpeg, node, gh,
+1. Run `bash <plugin>/scripts/setup.sh`. It installs what is missing (ffmpeg, node, gh,
    pillow + numpy, the Xcode command line tools, the game at the filmed commit, Playwright's
    Chromium) and registers the `joystick` MCP server. It prints a ✗ line for each thing only
    a person can do. Tell the user those lines, then run it again.
@@ -48,7 +52,7 @@ fal-ai/whisper it is the same path as for submit. For Seedance 2.5 it is the par
 (step 3).
 
 Not checked yet: fal-ai/whisper word times against the old whisper-1 times, and whether fal charges for a take that
-it rejects. Add what you see to the known issues in the pipeline's `README.md`.
+it rejects. Add what you see to the known issues in this skill's `README.md`.
 
 ## The run folder
 
@@ -61,8 +65,8 @@ writes to these files:
   takes/<name>-fal.json        4 the fal-ai/whisper result
   takes/<name>.mp4, <name>-words.json, <name>-sheet.png    4 from take.py; 6 fixes the words file
   <name>.ad.json               5 starts it (mute, bleep_words, caption_overrides); 9 adds crop and lost
-  specs/, stories/, plans/<name>-<shift>/                 7 from plan.sh
-  gameplay/<name>.mp4, plans/<name>/film-trace.json        8 from film.sh
+  specs/, stories/, plans/<name>-<shift>/                 7 from the race skill's plan.sh
+  gameplay/<name>.mp4, plans/<name>/film-trace.json        8 from the race skill's film.sh
   out/<name>.mp4               9 the video
 ```
 
@@ -95,7 +99,7 @@ read its section under "Step details" below; it has the prompts, the rules and t
 
 - [ ] **1. Script**
   - **Scope:** write the script for one ad. No images and no API calls.
-  - **In:** the user's one-line brief, `reference/brand-guardrails.md` and, in a batch, the other scripts.
+  - **In:** the user's one-line brief, `<plugin>/reference/brand-guardrails.md` and, in a batch, the other scripts.
   - **Out:** `<name>.md` with: who (age 30+, which earphones), where (and whether the setting moves), the off-camera
     people, every line on a 0–30 s timing grid, the race event each line maps to, the rival names, the stand-in
     curses to bleep, and the look-to-camera payoff.
@@ -147,22 +151,21 @@ read its section under "Step details" below; it has the prompts, the rules and t
   - **In:** the beats and the map.
   - **Out:** `plans/<name>-<shift>/` for each shift, and the chosen shift and map in `<name>.md`.
   - **Done when:** one shift lands the crashes, places and finish within about 0.2 s of the beats.
-  - **Code:** `scripts/plan.sh`, which runs `scripts/plan.ts` (the planner, on the game's own wasm physics) and
-    `scripts/mkspec.py` (the beats as a planner spec, on a pace story from `scripts/stories/`).
+  - **Code:** step 1 of the `dango-derby:race` skill.
 - [ ] **8. Race film**
   - **Scope:** film the chosen plan with its trails in the real game. No compose.
   - **In:** the chosen plan, the map, 1 player trail and 5 rival trails.
   - **Out:** `gameplay/<name>.mp4` (1080×2338, 60 fps) and `plans/<name>/film-trace.json`.
   - **Done when:** the trace line that `film.sh` prints matches the plan within about 0.1 s, and `film.err` has no
     `capture patch missing` line.
-  - **Code:** `scripts/film.sh`, which runs `scripts/driver-capture.mjs` (the frozen-clock browser recorder).
+  - **Code:** step 2 of the `dango-derby:race` skill.
 - [ ] **9. Compose**
   - **Scope:** build the video from the earlier steps' files. No new decision about the take.
   - **In:** `<name>.ad.json` (from step 5), the take, the words file, the film and its trace.
   - **Out:** `out/<name>.mp4`: 30 s, 1080×1920, 60 fps.
   - **Done when:** the file is written.
-  - **Code:** `scripts/compose.py`, which uses `scripts/gamesound.py` (the game sound from the film trace), the face
-    finders `scripts/facey.swift` and `scripts/facetrack.swift`, and `assets/fonts/Dango.ttf`.
+  - **Code:** `scripts/compose.py`, which uses `<plugin>/scripts/gamesound.py` (the game sound from the film trace),
+    the face finders `scripts/facey.swift` and `scripts/facetrack.swift`, and `<plugin>/assets/fonts/Dango.ttf`.
 - [ ] **10. Check**
   - **Scope:** check the finished video. Fix nothing in this step.
   - **In:** `out/<name>.mp4` and the plan.
@@ -381,23 +384,23 @@ Then write the beats:
 **Celebrating before the finish is the most visible fault.** Earlier cuts had actors cheering 1–2 s before the
 line. Plan the finish to the reaction.
 
-Pick the base story from the game profile: a comeback, a photo-finish win, or a loss at the line.
+Pick the base story: a comeback, a photo-finish win, or a loss at the line. The race skill lists the stories.
 
 ### 7. Race plan
 
-**Never generate gameplay. Record the real game.** The game profile says how. For Dango Derby:
-`reference/games/dango-derby.md` → `scripts/plan.sh`, with the game's own wasm physics.
+**Never generate gameplay. Record the real game.** Load the `dango-derby:race` skill, and do its step 1 (Race plan)
+with these inputs:
 
-- **Every ad gets its own map.**
-- Try 3 shifts (how far into the race the video starts), and keep the best fit.
-- If no shift fits, change a margin and plan again. If the deciding pass is early, shrink that rival's margin.
+- the batch folder and `<name>`;
+- the beats and the base story from `<name>.md` (step 6);
+- the rival names from the script. The game shows them, so the race proves the joke.
+
+Do not copy the race skill's checklist into your reply. Steps 7 and 8 of this checklist are its 2 steps.
 
 ### 8. Race film
 
-The game profile says how. For Dango Derby: `scripts/film.sh`, with a frozen browser clock.
-
-- **Trails on the player and on every rival, all different**, and different from the batch's other ads.
-- Film one race at a time (one headless browser). Several at once dropped frames and crawled the machine.
+Do step 2 (Race film) of the `dango-derby:race` skill. Give the player and each rival a different trail, and do not
+use the trails of the batch's other ads.
 
 ### 9. Compose
 
@@ -450,7 +453,7 @@ gameplay, game UI or the wordmark (brand rule 8).
 
 **Spend.** State the cost of each paid call and wait for a yes. Never submit more takes than the user approved.
 
-**Compliance is legally material.** Full list in `reference/brand-guardrails.md`. The
+**Compliance is legally material.** Full list in `<plugin>/reference/brand-guardrails.md`. The
 four most often missed:
 1. No *gambling, casino, bet, wager, jackpot, odds* — ever.
 2. No golf of anything. No putt, hole, tee, flag, golf ball. Check *locations*, not

@@ -1,9 +1,0 @@
-{
-  "name": "dango-ugc-factory",
-  "version": "2.0.0",
-  "description": "Makes 30 s Dango Derby reaction ads on a Mac: an AI actor on top reacts to a real, beat-matched race below. Every API call goes through Joystick, so nobody needs an API key.",
-  "author": {
-    "name": "Alex"
-  },
-  "homepage": "https://github.com/cartridge-gg/claude-plugins/tree/marketing/pipelines/dango-ugc-factory"
-}

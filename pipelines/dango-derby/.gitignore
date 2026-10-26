@@ -2,7 +2,7 @@
 *.env
 .DS_Store
 __pycache__/
-scripts/bin/
+**/scripts/bin/
 out/
 takes/
 work/

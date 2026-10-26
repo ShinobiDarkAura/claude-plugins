@@ -4,16 +4,17 @@ place bar straddling the seam, one-word captions timed to the take's own audio (
 the game's sound ducked under the voice, and the "18+ • AI Actor" footer.
 
 Paths in ad.json are relative to the ad.json. The game's look (layout, caption font, footer, curse list, game
-sound) comes from reference/games/<profile>.json. Example and every field: reference/ad.example.json.
+sound) comes from the plugin's reference/games/<profile>.json. Example and every field: reference/ad.example.json.
 """
 import sys, os, json, subprocess, statistics, tempfile
 from PIL import Image, ImageDraw, ImageFont
 
 SKILL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PLUGIN = os.path.dirname(os.path.dirname(SKILL))   # the plugin root: the game profiles and the files they name
 AD = os.path.abspath(sys.argv[1]); BASE = os.path.dirname(AD); cfg = json.load(open(AD))
-P = json.load(open(f"{SKILL}/reference/games/{cfg['profile']}.json"))
+P = json.load(open(f"{PLUGIN}/reference/games/{cfg['profile']}.json"))
 rel = lambda p: p if os.path.isabs(p) else os.path.normpath(os.path.join(BASE, p))
-sk = lambda p: p if os.path.isabs(p) else os.path.join(SKILL, p)
+sk = lambda p: p if os.path.isabs(p) else os.path.join(PLUGIN, p)
 face, film, out = rel(cfg['face']), rel(cfg['gameplay']), rel(cfg['out'])
 DUR = float(cfg.get('duration', 30)); W = tempfile.mkdtemp(prefix='reaction-')
 H = P['top_height']; B = 1920 - H; y0 = P['game_bottom'] - B

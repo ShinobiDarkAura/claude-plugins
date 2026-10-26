@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Check every pipelines/<name>/ folder: the README.md frontmatter and sections, .claude-plugin/plugin.json, the
-pipeline's entry in .claude-plugin/marketplace.json, and the checklist in skills/<name>/SKILL.md.
+"""Check every plugin in pipelines/<plugin>/: its .claude-plugin/plugin.json and its entry in
+.claude-plugin/marketplace.json, and in each skill (one pipeline) in skills/<skill>/, the README.md frontmatter and
+sections and the checklist in SKILL.md.
 
     python3 scripts/pipelines-check.py                       # exits 1 and names each problem
     python3 scripts/pipelines-check.py --base origin/marketing  # also: a changed pipeline must change its version
 
 CI runs it on every pipelines/ change, with --base on pull requests. Users get a new copy of a plugin only when
-its plugin.json version changes, so a change without a new version never reaches them.
+its plugin.json version changes, so a change without a new version never reaches them. One version covers all the
+skills of a plugin.
 
 The frontmatter is a small YAML subset: `key: value` and `key: [a, b, c]`, with `#` comments.
 List items cannot contain commas. Standard library only, so it runs on any machine and in CI.
@@ -82,8 +84,8 @@ def catalog():
     return json.loads(MARKETPLACE.read_text()).get("plugins", [])
 
 
-def check(folder):
-    """Return the problems of one pipeline folder."""
+def check_skill(folder):
+    """Return the problems of one skill folder, skills/<skill>/: one pipeline."""
     problems = [f"missing {f}" for f in FILES if not (folder / f).exists()]
     fm = {}
     if (folder / "README.md").exists():
@@ -114,32 +116,10 @@ def check(folder):
     if "last_verified" in fm and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", fm["last_verified"]):
         problems.append("README.md: last_verified must be a date, YYYY-MM-DD")
 
-    # The pipeline folder is a plugin: plugin.json has its name and its only version, and the marketplace lists it.
-    if (folder / "VERSION").exists():
-        problems.append("VERSION: delete it; the version is only in .claude-plugin/plugin.json")
-    manifest = plugin_json(folder)
-    if manifest is None and fm.get("stage") not in (None, "experimenting"):
-        problems.append(f"stage is {fm['stage']} but there is no .claude-plugin/plugin.json")
-    elif isinstance(manifest, str):
-        problems.append(manifest)
-    elif isinstance(manifest, dict):
-        if manifest.get("name") != folder.name:
-            problems.append(f"plugin.json: name is {manifest.get('name')!r} but the folder is {folder.name!r}")
-        if not re.fullmatch(r"\d+\.\d+\.\d+", str(manifest.get("version", ""))):
-            problems.append("plugin.json: version must look like 1.2.3")
-        entries = [e for e in catalog() if e.get("name") == folder.name]
-        if not entries:
-            problems.append(f"{MARKETPLACE.relative_to(ROOT)}: no entry named {folder.name!r}")
-        for e in entries:
-            if e.get("source") != f"./pipelines/{folder.name}":
-                problems.append(f"marketplace entry: source must be './pipelines/{folder.name}'")
-            if "version" in e:
-                problems.append("marketplace entry: remove version; it is only in plugin.json")
-
-    # The skill is skills/<name>/SKILL.md. Each step is one checklist item in it, and it states its scope.
-    skill = folder / "skills" / folder.name / "SKILL.md"
+    # The skill is SKILL.md. Each step is one checklist item in it, and it states its scope.
+    skill = folder / "SKILL.md"
     if not skill.exists() and fm.get("stage") not in (None, "experimenting"):
-        problems.append(f"stage is {fm['stage']} but there is no skills/{folder.name}/SKILL.md")
+        problems.append(f"stage is {fm['stage']} but there is no SKILL.md")
     if skill.exists():
         text = skill.read_text()
         m = re.match(r"---\n(.*?)\n---\n", text, re.S)
@@ -155,6 +135,42 @@ def check(folder):
             for field in STEP_FIELDS:
                 if not any(l.startswith(f"- **{field}:**") for l in lines):
                     problems.append(f"SKILL.md: step {n} has no '- **{field}:**' line")
+    return problems, fm.get("stage")
+
+
+def check(folder):
+    """Return [(where, problem)] for one plugin folder, pipelines/<plugin>/, and the skills in it."""
+    problems = [(folder, f"missing {f}") for f in FILES if not (folder / f).exists()]
+    stages = []
+    skills = sorted(p for p in (folder / "skills").glob("*") if p.is_dir())
+    for s in skills:
+        found, stage = check_skill(s)
+        problems += [(s, p) for p in found]
+        stages.append(stage)
+    if not skills:
+        problems.append((folder, "no skills/<skill>/ folder: each pipeline is one skill"))
+
+    # The plugin folder: plugin.json has its name and its only version, and the marketplace lists it.
+    if (folder / "VERSION").exists():
+        problems.append((folder, "VERSION: delete it; the version is only in .claude-plugin/plugin.json"))
+    manifest = plugin_json(folder)
+    if manifest is None and any(st not in (None, "experimenting") for st in stages):
+        problems.append((folder, "a skill is past experimenting, but there is no .claude-plugin/plugin.json"))
+    elif isinstance(manifest, str):
+        problems.append((folder, manifest))
+    elif isinstance(manifest, dict):
+        if manifest.get("name") != folder.name:
+            problems.append((folder, f"plugin.json: name is {manifest.get('name')!r} but the folder is {folder.name!r}"))
+        if not re.fullmatch(r"\d+\.\d+\.\d+", str(manifest.get("version", ""))):
+            problems.append((folder, "plugin.json: version must look like 1.2.3"))
+        entries = [e for e in catalog() if e.get("name") == folder.name]
+        if not entries:
+            problems.append((folder, f"{MARKETPLACE.relative_to(ROOT)}: no entry named {folder.name!r}"))
+        for e in entries:
+            if e.get("source") != f"./pipelines/{folder.name}":
+                problems.append((folder, f"marketplace entry: source must be './pipelines/{folder.name}'"))
+            if "version" in e:
+                problems.append((folder, "marketplace entry: remove version; it is only in plugin.json"))
     return problems
 
 
@@ -179,8 +195,8 @@ def main():
     folders = sorted(p for p in PIPELINES.iterdir() if p.is_dir())
     failed = False
     for folder in folders:
-        for p in check(folder) + (bumped(folder, base) if base else []):
-            print(f"{folder.relative_to(ROOT)}: {p}", file=sys.stderr)
+        for where, p in check(folder) + [(folder, p) for p in (bumped(folder, base) if base else [])]:
+            print(f"{where.relative_to(ROOT)}: {p}", file=sys.stderr)
             failed = True
     for e in catalog():   # an entry for a pipeline folder that is not there
         src = str(e.get("source", ""))
@@ -189,7 +205,8 @@ def main():
             failed = True
     if failed:
         sys.exit(1)
-    print(f"{len(folders)} pipeline(s) ok")
+    skills = sum(1 for f in folders for p in (f / "skills").glob("*") if p.is_dir())
+    print(f"{len(folders)} plugin(s), {skills} pipeline(s) ok")
 
 
 if __name__ == "__main__":

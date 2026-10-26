@@ -1,5 +1,5 @@
 #!/bin/bash
-# plan.sh — step 7: plan a Dango Derby race that hits an actor's beats, once per candidate shift.
+# plan.sh — race skill, step 1: plan a Dango Derby race that hits an actor's beats, once per candidate shift.
 #
 #   plan.sh <work> <name> <seed> <motif> <base> <finish> '<crashes>' '<ranks>' '<margins>' <shift...>
 #       plans the race once per candidate shift into <work>/plans/<name>-<shift> and prints how well each fits
