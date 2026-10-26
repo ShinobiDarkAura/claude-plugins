@@ -91,6 +91,22 @@ The place bar leaves when the race finishes, because the results screen has its 
 buttons ride along in the strip, which reads as authentic. Snapchat-style caption bars, when an ad uses them, sit
 **below** the place bar, never on it.
 
+## Anime and other languages
+
+The skill can also make an ad in an anime style, and an ad with dialogue in a language other than English. The test
+ad "rooftop" (2026-10-23) went through all 10 steps: an original adult anime duo, Japanese dialogue and English
+captions. Do the same 10 steps, with these changes. The step details give each change.
+
+| Step | Change |
+|---|---|
+| 1. Script | Original adult characters only. Write each line in its language, then its romaji (or other Latin form) and its meaning. Check each language for words that people link to gambling. |
+| 2. Start frame | Use the anime frame prompt. If the actor looks into the lens, fix it with one edit call. |
+| 3. Take | Name the language in the first line of the prompt, and use the anime lines of the prompt. |
+| 4. Transcript | Set `language`. For Japanese and Chinese, expect about 1 chunk for each character. |
+| 5. Take review | Look for an early look into the lens. |
+| 6. Beats | For captions in a second language, write the caption words file by hand. |
+| 9. Compose | Keep the crop from the face finder. It also finds anime faces. |
+
 ## Steps
 
 Copy this checklist into your reply for each ad, and check off a step when its "Done when" is true. Do not start a
@@ -210,8 +226,15 @@ Rules:
   actor mouthing "sorry!", works well.
 - **Never**: a money or earnings angle, real brands, celebrities, IP or characters (no Family Guy), golf, gambling
   words. Check the game's guardrails.
+- **Original adult characters only, in every style** (brand rule 9). If the user asks for a character from an anime
+  or other IP, or for characters in school uniform, decline and offer an original adult design. A request for
+  Jujutsu Kaisen's Gojo and Geto in school became KAITO and REN, 32, on their office roof.
 - **A curse that could trip the filter**: write a stand-in ("absolute WEAPON!", "for FECK'S sake") and list it to
   bleep (step 3).
+- **Dialogue in another language**: write each line in its language, then its romaji (or other Latin form) and its
+  meaning, so that the user can check it. Look for the words that people in that language link to gambling, not
+  only the English words. The rooftop ad did not use 「差せ」 ("overtake!"): it is the horse-racing call, and in
+  Japan, people link horse racing to betting. Its stand-in curse was 「ちくしょう」 ("damn it").
 
 ### 2. Start frame
 
@@ -234,6 +257,25 @@ watermark. Subject: <who, age 30+, earphones, clothes> <where, light, what's beh
 - Put the script's earphones in the subject line.
 - If the setting moves, put motion blur in its window.
 - Make the actor clearly 30+: Seedance's filter rejects faces that read under ~25 (step 3).
+- **The eyes must be on the phone.** The look into the lens is the payoff, so the frame must not have it. If the
+  actor looks into the lens, do not approve the frame. Fix it with one `fal-ai/gpt-image-2/edit` call (below):
+  "Change only this: their eyes look DOWN at a phone that they hold in both hands just below the bottom edge of the
+  frame, and their arms bend down toward it. The phone is NOT visible. They do not look at the camera."
+
+**Anime style.** Use this prompt. It made the rooftop frame. Anime faces can read young, so give the age and write
+"not a teenager":
+
+```
+Vertical 9:16 still frame from a modern anime TV series, clean cel-shaded anime art with soft lighting. The frame
+looks like a candid front-camera phone video: slightly low angle, natural handheld framing. An original adult
+character, clearly <a man or a woman> in <their> early 30s, not a teenager. Eyes looking DOWN at a phone held just
+below the frame; the phone is NOT visible. They do not look at the camera. Head and shoulders fill the upper two
+thirds of the frame. No text, no logos, no brand names, no watermark. Original character design, not based on any
+existing anime or manga character. Subject: <who, age 30+, earphones, clothes> <where, light, what's behind them>.
+```
+
+The first rooftop frame looked into the lens, and one edit call fixed it. The sentence "They do not look at the
+camera." was added after that run, and is not tested yet.
 
 **To keep an actor and change one thing** (add earbuds, move them to their nan's front room, blur the train window),
 edit the approved frame instead of regenerating it, with the frame's fal URL:
@@ -292,6 +334,19 @@ no grey or blotchy skin, no painterly texture, no cartoonish voice, no cuts, no 
 - If the setting moves, say so in capitals: "THE BUS IS CLEARLY DRIVING the whole time … no stationary bus".
 - In a batch, submit the takes in parallel: each `submit` gives its own `request_id`. Poll them in turn.
 
+**Anime style or another language.** Change these parts of the prompt:
+
+- In the first line, name the language: "ALL DIALOGUE IS SPOKEN ALOUD IN JAPANESE." Write the lines in quotation
+  marks in that language and its own script. In VOICE(S), give the speech, for example "casual Tokyo Japanese".
+- For anime, start with "One continuous 30-second take in the anime art style of the start image: clean cel-shaded
+  2D anime, kept the same in every frame." Delete "Natural healthy skin with real texture, sharp detail."
+- In NEGATIONS, put "no subtitles". For anime, put "no change of art style, no photorealism" in place of "no grey or
+  blotchy skin, no painterly texture, no cartoonish voice".
+
+On 2026-10-23 the US endpoint accepted the anime rooftop frame on the first try. The take still looked into the lens
+from 6.6 s to 8 s, at the crash, although the prompt said "no looking at the camera before the last line". Step 5
+looks for this.
+
 #### If the filter rejects the take (status "nsfw", refunded)
 
 Learned over ~45 submissions:
@@ -338,6 +393,10 @@ python3 scripts/take.py <name> <take url> --dir takes --fal-words takes/<name>-f
 
 It downloads the take, writes the words file, prints the words and the loud onsets, and writes the contact sheet.
 
+For dialogue in another language, set `language` to its code, for example `"ja"`. For Japanese and Chinese,
+fal-ai/whisper gives about 1 chunk for each character, not for each word: the rooftop take gave 110 chunks.
+`take.py` writes each chunk as one word. Use those chunks for the times in step 6.
+
 ### 5. Take review
 
 ```bash
@@ -354,9 +413,12 @@ Look at both sheets:
 - A phone edge visible low in the take is fine: the top panel crop usually removes it.
 - **The lips sheet shows the chin, not the mouth**: the camera moved, and the sheet crops at the median face
   position. Check those seconds on full frames (`ffmpeg -ss <second> -i takes/<name>.mp4 -frames:v 1 frame.png`).
+- **An early look into the lens**: the actor looks at the camera before the last line, often at a crash or a shout.
+  The rooftop take did it from 6.6 s to 8 s, against the prompt. Look for it on the contact sheet, and tell the user
+  its seconds. `mute` does not hide it: the user keeps the take or asks for a new one (step 3).
 
 Put the script's stand-in curses in `bleep_words`, and any caption spelling in `caption_overrides` (for example
-`"bubbles": "BUBBLES?!"`).
+`"bubbles": "BUBBLES?!"`). If the captions are in a second language, put both in the caption language (step 6).
 
 ### 6. Beats
 
@@ -369,6 +431,18 @@ The race is built to the take, never the other way round. Fix the words file by 
   "Tuesday day" → "Tuesday, Dai").
 - It can miss a short off-camera word (a "Mm-hm"). That is not a fault, so do not add it.
 - Delete its invented repeat of the last line at 30.0 s.
+
+**Captions in a second language** (for example English captions on Japanese dialogue). `compose.py` makes the
+captions and the bleeps from one words file, the `words` file in `<name>.ad.json`. So:
+
+1. Fix the words file of the dialogue language, `takes/<name>-words.json`, as above. The beats come from it.
+2. Write the caption words file by hand, `takes/<name>-words-<lang>.json` (for example `rooftop-words-en.json`), in
+   the same format: `{"text": "…", "words": [{"word": "…", "start": 0.0, "end": 0.5}, …]}`. Time each caption word
+   on the dialogue words of the same line.
+3. Time a bleeped caption word over the whole curse. `compose.py` bleeps from 0.02 s before the word to 0.03 s after
+   it. The rooftop caption "damn" is at 6.8–7.6 s, on 「ちくしょう」 (6.75–7.63 s), and the bleep is 6.78–7.63 s.
+4. Set `words` in `<name>.ad.json` to the caption words file. Put `bleep_words` and `caption_overrides` in the caption
+   language: the rooftop ad has `"bleep_words": ["damn"]`.
 
 Then write the beats:
 
@@ -415,6 +489,10 @@ Every field is in `reference/ad.example.json`.
 - **Crop: fixed by default.** A face that drifts part-way out of the panel when they lean in or throw their head
   back reads as a real phone recording, so keep it. Use a fixed integer (e.g. `90`) to keep a passer-by's face in
   shot. Use `"track"` only when a key line's mouth is lost for seconds.
+- **Start with the face finder's crop** (`"crop": null`). It also finds anime faces. `compose.py` prints the crop
+  that it used. Do not set an integer before you look at frames with that crop. After you set one, look at frames
+  across the take: the place bar (745–945) must not hide the face. In the rooftop ad, a crop of `60` hid the face
+  behind the place bar from 10 s to 20 s, and the face finder's crop (471) was correct.
 - **`lost`**: the seconds where the player loses a place, from the film trace. The game sound plays its "lost" cue
   there.
 - **Captions**: one word per card in the profile's caption style, on the seam. Curses become `#####` with a 1 kHz bleep.
