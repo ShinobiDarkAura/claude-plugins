@@ -121,7 +121,7 @@ With the plugin installed, ask Claude for a video. The pipeline's `README.md` ha
    an entry to `.claude-plugin/marketplace.json`:
 
    ```json
-   { "name": "<name>", "source": "./pipelines/<name>", "category": "pipeline" }
+   { "name": "<name>", "source": "./pipelines/<name>", "category": "creative pipeline" }
    ```
 
    Do not set `version` in the entry.
