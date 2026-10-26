@@ -31,6 +31,9 @@ a kids' toy, all-money is a casino ad.
 7. Never imply cosmetics affect performance. Skins, faces and trails are purely visual.
 8. Use **real footage and screens** from the game. Never fabricate or restyle gameplay.
    No model may generate game UI, and no model may ever draw the wordmark.
+9. **Original adult characters only**, in every style, anime too. The game is 18+, so every
+   character is clearly an adult. Never use a character or a character design from an anime,
+   a manga, a game, a film or any other IP. Never put a character in a school uniform.
 
 ## Voice
 

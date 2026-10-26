@@ -44,6 +44,13 @@ into the lens for the first time, and the joke lands.
   nan, quiet coach). 8–10 ads shipped.
 - **Cost:** about $13.87 for each 30 s take, plus a few cents for the start frame and the word timings.
 
+### 30 s reaction ad, anime style or another language (experiment)
+
+The same ad, with an original adult anime character, or with dialogue in another language and captions in English.
+The test ad "rooftop" (2026-10-23) went through all 10 steps: KAITO, 32, plays on his office roof, and his friend
+REN speaks off camera, in Japanese with English captions. No ad in this style has passed step 10 yet. The frame,
+the output and the cost are the same as above. See "Anime and other languages" in [`SKILL.md`](SKILL.md).
+
 The playbook is [`SKILL.md`](SKILL.md): a checklist with one item per step, then the details of each step.
 
 ## Make a video
@@ -77,8 +84,8 @@ Questions: ask Alex.
 
 ## Known issues
 
-1. **The full run has not gone through Joystick yet.** On 2026-10-23 the pipeline made a full video (the pigeons
-   ad) with a direct fal key, because Joystick's shared fal account still had no credit
+1. **The full run has not gone through Joystick yet.** On 2026-10-23 the pipeline made 2 full videos (the pigeons
+   ad and the anime rooftop ad) with a direct fal key, because Joystick's shared fal account still had no credit
    (`User is locked. Reason: Exhausted balance.`). Every step worked. Not checked through Joystick: the 3 paid calls,
    and `status` and `result` for Seedance 2.5 with the parent path `bytedance/seedance-2.5`. That is the path in
    fal's own `status_url`, but Joystick's tool builds the URL from the full path for its `seedance-2.5-*` presets.
