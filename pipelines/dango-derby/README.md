@@ -63,14 +63,27 @@ You do not need any API key.
 ## Move from dango-ugc-factory
 
 Until version 3.0.0, this plugin was `dango-ugc-factory`, with one skill, `dango-ugc-factory:dango-ugc-factory`. The
-catalog renames it, so you do not install it again:
+catalog renames it. To move:
 
-1. Get the new catalog: `claude plugin marketplace update cartridge-marketing`. With auto-update on, Claude Code
-   does this for you.
-2. Start a new Claude Code session. At the start, Claude Code installs `dango-derby` in place of
-   `dango-ugc-factory`, and keeps it enabled.
+1. Get the new catalog:
 
-`claude plugin list` then shows `dango-derby@cartridge-marketing`. Ask for an ad the same way as before.
+   ```bash
+   claude plugin marketplace update cartridge-marketing
+   ```
+
+2. Install the new plugin. It replaces `dango-ugc-factory`:
+
+   ```bash
+   claude plugin install dango-derby@cartridge-marketing
+   ```
+
+3. Start a new Claude Code session, or run `/reload-plugins` in a session.
+
+`claude plugin list` then shows `dango-derby@cartridge-marketing`, and not `dango-ugc-factory`. Ask for an ad the
+same way as before.
+
+If you do not do step 2, Claude Code moves you itself: the first session after the catalog update installs
+`dango-derby`, and the skills load from the next session. This also happens with auto-update.
 
 If you installed the kit with `npx skills add`, delete `~/.claude/skills/dango-ugc-factory`. If that copy stays,
 Claude loads the skill twice. If you installed the kit before 2026-10-23, also delete
