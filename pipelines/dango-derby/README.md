@@ -8,8 +8,9 @@ makes.
 | --- | --- | --- |
 | [`reaction-ad`](skills/reaction-ad/) | ad | 30 s reaction ads: an AI actor on top reacts to a real, beat-matched race below |
 | [`race`](skills/race/) | capture | A real race, planned and filmed so its crashes, places and finish land on given beats |
+| [`endcard`](skills/endcard/) | scene | The official end card on any finished ad, with the ball-roll wipe; checks ads and fixes old 5-cosmetic cards |
 
-The skill ids are `dango-derby:reaction-ad` and `dango-derby:race`. The reaction-ad skill uses the race skill for its
+The skill ids are `dango-derby:reaction-ad`, `dango-derby:race` and `dango-derby:endcard`. The reaction-ad skill uses the race skill for its
 steps 7 and 8.
 
 ## Install and set up
@@ -102,6 +103,8 @@ The known issues of each skill are in its `README.md`.
 - [`skills/reaction-ad/`](skills/reaction-ad/): the reaction-ad skill: `SKILL.md`, its scripts (take, lip check,
   face finders, compose) and the example `ad.json`.
 - [`skills/race/`](skills/race/): the race skill: `SKILL.md`, the planner, the pace stories and the film.
+- [`skills/endcard/`](skills/endcard/): the endcard skill: `SKILL.md`, the card itself (`assets/`), the wipe and the
+  add, check and fix script.
 - [`scripts/`](scripts/): the files that every skill uses: `setup.sh` (the Mac setup), `gamesound.py` (the game sound
   from a race trace) and `selfcheck.py` (the offline check that CI runs).
 - [`reference/`](reference/): the brand guardrails and the game profile (`games/dango-derby.{md,json}`), with a
