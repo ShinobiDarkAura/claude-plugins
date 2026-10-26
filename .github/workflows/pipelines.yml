@@ -1,0 +1,49 @@
+name: Pipelines
+
+# Checks the creative pipelines in pipelines/ (see pipelines/README.md): every pipeline's README.md and its
+# frontmatter, its plugin.json and marketplace entry, the steps checklist in SKILL.md, a version bump on every
+# changed pipeline (pull requests only), each skill's offline self-check, and the catalog itself with
+# `claude plugin validate`. Spends nothing and needs no secrets.
+on:
+  push:
+    branches: [marketing]
+    paths:
+      - "pipelines/**"
+      - ".claude-plugin/**"
+      - "scripts/pipelines-check.py"
+      - ".github/workflows/pipelines.yml"
+  pull_request:
+    branches: [marketing]
+    paths:
+      - "pipelines/**"
+      - ".claude-plugin/**"
+      - "scripts/pipelines-check.py"
+      - ".github/workflows/pipelines.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # the version-bump check diffs against the base branch
+
+      - name: Check each README.md, plugin.json and SKILL.md
+        env:
+          BASE: ${{ github.base_ref }}
+        run: python3 scripts/pipelines-check.py ${BASE:+--base origin/$BASE}
+
+      - name: Run each skill's self-check
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for f in pipelines/*/skills/*/scripts/selfcheck.py; do
+            echo "== $f"
+            PYTHONDONTWRITEBYTECODE=1 python3 "$f"
+          done
+
+      - name: Validate the catalog
+        run: npx -y @anthropic-ai/claude-code@2.1.309 plugin validate .

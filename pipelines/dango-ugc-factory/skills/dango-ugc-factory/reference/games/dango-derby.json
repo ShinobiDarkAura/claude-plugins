@@ -1,0 +1,21 @@
+{
+  "_about": "Layout and caption look for Dango Derby reaction ads (approved 2026-09-30). Frame is 1080x1920. Explained in dango-derby.md.",
+  "top_height": 845,
+  "game_bottom": 1675,
+  "hud_strip": [0, 28, 200],
+  "hud_offset": -100,
+  "caption": {
+    "font": "/System/Library/Fonts/HelveticaNeue.ttc", "index": 1,
+    "size": 112, "stroke": 8, "fill": "white", "stroke_fill": "black",
+    "center_y": 1120, "max_width": 980
+  },
+  "curses": ["fuck", "fucking", "fucked", "shit", "shite", "fricking", "frick"],
+  "curse_prefixes": ["fuck"],
+  "slang": {"first": "1st", "second": "2nd", "okay": "ok", "you": "u", "you're": "ur", "you've": "u've"},
+  "footer": {
+    "size": 36, "y": 1856,
+    "fonts": {"brand": {"file": "assets/fonts/Dango.ttf"}, "ui": {"file": "/System/Library/Fonts/HelveticaNeue.ttc", "index": 1}},
+    "parts": [["18+", "brand"], ["  •  ", "ui"], ["AI Actor", "brand"]]
+  },
+  "gamesound": "scripts/gamesound.py"
+}
