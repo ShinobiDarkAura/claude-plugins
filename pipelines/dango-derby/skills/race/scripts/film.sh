@@ -1,5 +1,5 @@
 #!/bin/bash
-# film.sh — step 8: film a planned Dango Derby race in the real game.
+# film.sh — race skill, step 2: film a planned Dango Derby race in the real game.
 #
 #   film.sh <work> <name> <shift> <seed> <motif> <player-trail> <rival-trails,comma,separated>
 #       films <work>/plans/<name>-<shift> to <work>/gameplay/<name>.mp4 and writes <work>/plans/<name>/film-trace.json
