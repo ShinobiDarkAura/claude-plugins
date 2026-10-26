@@ -45,6 +45,7 @@ Makes Dango Derby video ads on your Mac. Owner: Alex.
 | --- | --- |
 | `dango-derby:reaction-ad` | Makes a finished 30 s vertical video ad. An AI actor reacts on top, and a real race from the game plays below. |
 | `dango-derby:race` | Plans and films a real Dango Derby race, so that its crashes, places and finish land on given seconds. The reaction-ad skill uses it. |
+| `dango-derby:endcard` | Puts the one official end card on any finished vertical ad with the ball-roll wipe, checks that ads end on it, and fixes ads that still have the old 5-cosmetic card. |
 
 To make an ad, ask Claude something like this:
 
