@@ -1,7 +1,7 @@
 # Game profile — <Game name>
 
 Copy this file and `dango-derby.json` to `<game>.md` / `<game>.json`, then fill them in. The playbook
-(`SKILL.md`) is the same for every game; only these answers change.
+(`skills/reaction-ad/SKILL.md`) is the same for every game; only these answers change.
 
 ## Layout (`<game>.json`)
 

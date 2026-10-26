@@ -7,9 +7,12 @@
   },
   "plugins": [
     {
-      "name": "dango-ugc-factory",
-      "source": "./pipelines/dango-ugc-factory",
+      "name": "dango-derby",
+      "source": "./pipelines/dango-derby",
       "category": "creative pipeline"
     }
-  ]
+  ],
+  "renames": {
+    "dango-ugc-factory": "dango-derby"
+  }
 }
